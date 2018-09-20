@@ -5,7 +5,9 @@ $.getJSON("/articles", function(data) {
     // Display the apropos information on the page
     $("#articles").append(`
       <div class="article-container" data-id="${data[i]._id}">
+      <img src="${data[i].imageLink}">
       <h2>${data[i].title}</h2>
+      <p>${data[i].articleDescription} </p>
       <a href="${"http://www.worldsurfleague.com" + data[i].link}" target="_blank">See Full Article</a>
       </div>
     `);

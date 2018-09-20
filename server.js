@@ -37,7 +37,6 @@ app.get("/scrape", function(req, res) {
   axios.get("http://www.worldsurfleague.com/news").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
-
     // Now, we grab every h2 within an article tag, and do the following:
     $("a.content-card-title").each(function(i, element) {
       // Save an empty result object
@@ -46,6 +45,7 @@ app.get("/scrape", function(req, res) {
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this).text();
       result.link = $(this).attr("href");
+
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
@@ -58,7 +58,6 @@ app.get("/scrape", function(req, res) {
           return res.json(err);
         });
     });
-
     // If we were able to successfully scrape and save an Article, send a message to the client
     res.send("Scrape Complete");
   });
