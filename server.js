@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/week18Populater");
+mongoose.connect("mongodb://localhost/surfNewsScraper");
 
 // Routes
 
@@ -38,13 +38,14 @@ app.get("/scrape", function(req, res) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
     // Now, we grab every h2 within an article tag, and do the following:
-    $("a.content-card-title").each(function(i, element) {
+    $(".content-card-text").each(function(i, element) {
       // Save an empty result object
       var result = {};
-
       // Add the text and href of every link, and save them as properties of the result object
-      result.title = $(this).text();
-      result.link = $(this).attr("href");
+      result.title = $(this).children("a").text();
+      result.link = $(this).children("a").attr("href");
+      result.articleDescription = $(this).children("p").text().trim();
+      // result.imageLink = $(this).parent("#nsi-3").attr("data-img-src");
 
 
       // Create a new Article using the `result` object built from scraping
