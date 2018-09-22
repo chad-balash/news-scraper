@@ -4,21 +4,24 @@ $.getJSON("/articles", function(data) {
   for (var i = 0; i < data.length; i++) {
     // Display the apropos information on the page
     $("#articles").append(`
-      <div class="article-container" data-id="${data[i]._id}">
-      <img src="${data[i].imageLink}">
-      <h2>${data[i].title}</h2>
-      <p>${data[i].articleDescription} </p>
-      <a href="${"http://www.worldsurfleague.com" + data[i].link}" target="_blank">See Full Article</a>
+      <div class="card mt-3" data-toggle="modal" data-target="#exampleModal" data-id="${data[i]._id}">
+      <h5 class="card-header">${data[i].title}</h5>
+      <div class="card-body">
+        <p class="card-text">${data[i].articleDescription}</p>
+        <a href="${"http://www.worldsurfleague.com" + data[i].link}" target="_blank" class="btn btn-primary">See Full Article</a>
       </div>
+    </div>
     `);
   }
 });
 
 
 // Whenever someone clicks a p tag
-$(document).on("click", "div.article-container", function() {
+$(document).on("click", "div.card", function() {
   // Empty the notes from the note section
+  
   $("#notes").empty();
+  
   // Save the id from the p tag
   var thisId = $(this).attr("data-id");
 
@@ -30,14 +33,40 @@ $(document).on("click", "div.article-container", function() {
     // With that done, add the note information to the page
     .then(function(data) {
       console.log(data);
-      // The title of the article
-      $("#notes").append("<h2>" + data.title + "</h2>");
-      // An input to enter a new title
-      $("#notes").append("<input id='titleinput' name='title' >");
-      // A textarea to add a new note body
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
-      // A button to submit a new note, with the id of the article saved to it
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+
+      $("#notes").append(`
+  <div class="modal" id="note-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">${data.title}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="false">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+        <label for="exampleFormControlInput1">Title</label>
+        <input type="text" class="form-control" id="titleinput" name="title" >
+      </div>
+        <div class="form-group">
+        <label for="exampleFormControlTextarea1">Note</label>
+        <textarea class="form-control" id="bodyinput" name="body" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" data-id="${data._id}" id="savenote" data-dismiss="modal" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+`);
+
+
+
+
+$("#note-modal").modal("toggle");
 
       // If there's a note in the article
       if (data.note) {
